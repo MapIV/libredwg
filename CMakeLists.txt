@@ -427,6 +427,21 @@ else()
     install(TARGETS ${executables_TARGETS}
             DESTINATION "${CMAKE_INSTALL_BINDIR}")
   endif()
+
+  # libredwg.pc.in は upstream の autotools ビルド用テンプレートだが、プレースホルダー名を
+  # 合わせた CMake 変数を用意して configure_file(@ONLY) に流用する。
+  # CMake ビルドではこれが生成されず、pkg_check_modules(libredwg) で見つけられなかったため追加。
+  set(prefix "${CMAKE_INSTALL_PREFIX}")
+  set(exec_prefix "\${prefix}")
+  set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
+  set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+  set(PACKAGE_TARNAME "libredwg")
+  set(VERSION "${PACKAGE_VERSION}")
+  set(PACKAGE_URL "https://www.gnu.org/software/libredwg/")
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libredwg.pc.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/libredwg.pc @ONLY)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libredwg.pc
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endif()
 install(TARGETS RUNTIME)
 
