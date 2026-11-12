@@ -2523,8 +2523,11 @@ DWG_ENTITY (MESH)
   SUBCLASS (AcDbSubDMesh)
   FIELD_BS (dlevel, 71);       // version, 2
   FIELD_B (is_watertight, 72); // blend_crease 0
-  FIELD_BL (num_subdiv_vertex, 91); // subdivision_levels 0
-  FIELD_3DPOINT_VECTOR (subdiv_vertex, num_subdiv_vertex, 10);
+  // DXF 91 is the subdivision level count, a plain integer. It is NOT followed
+  // by a point list: reading num_subdiv_vertex 3BD points here shifts every
+  // following field and makes AutoCAD 2018+ meshes decode to num_vertex == 0.
+  // The subdiv_vertex field is kept in the struct for ABI compatibility only.
+  FIELD_BL (num_subdiv_vertex, 91); // subdivision_levels
   FIELD_BL (num_vertex, 92); //14 @14
   FIELD_3DPOINT_VECTOR (vertex, num_vertex, 10);
   FIELD_BL (num_faces, 93); // 30
